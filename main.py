@@ -22,7 +22,6 @@ class Game:
                     sys.exit()
 
             self.current_stage.run()
-
             pygame.display.update()
 
 
