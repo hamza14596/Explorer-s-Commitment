@@ -48,11 +48,17 @@ class Player(pygame.sprite.Sprite):
         if self.jump:
             if self.on_surface['floor']:
                 self.direction.y = -self.jump_height
-                self.jump = False
+            self.jump = False
 
     def check_on_surface(self):
-        floor_rect = pygame.Rect(self.rect.bottomleft, self.rect.bottom + 1, self.rect.width, 2)
+        floor_rect = pygame.Rect(self.rect.bottomleft, (self.rect.width, 2))
+        right_rect = pygame.Rect(self.rect.topright, (2, self.rect.height))
+        left_rect = pygame.Rect(self.rect.topleft - vector(2,0), (2, self.rect.height))
 
+
+        collide_rects = [sprite.rect for sprite in self.collision_sprites]
+
+        self.on_surface['floor'] = True if floor_rect.collidelist(collide_rects) >= 0 else False
     def collisions(self, axis):
         for sprite in self.collision_sprites:
             if sprite.rect.colliderect(self.rect):
@@ -78,3 +84,4 @@ class Player(pygame.sprite.Sprite):
         self.old_rect = self.rect.copy()
         self.input()
         self.move(dt)
+        self.check_on_surface()
