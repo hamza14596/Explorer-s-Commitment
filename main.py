@@ -24,7 +24,7 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-            self.current_stage.run(dt)
+            self.current_stage.run(dt) 
             pygame.display.update()
 
 
