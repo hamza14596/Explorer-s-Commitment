@@ -12,13 +12,16 @@ class Player(pygame.sprite.Sprite):
         self.old_rect = self.rect.copy()
 
         self.direction = vector()
-        self.speed = 100
+        self.speed = 50
         self.gravity = 60
         self.jump = False
-        self.jump_height = 200
+        self.jump_height = 150
 
         self.collision_sprites = collision_sprites
         self.on_surface = {'floor': True, 'left': False, 'right': False}
+        
+        self.platform = None
+     
 
 
         self.ticker = {
@@ -69,20 +72,26 @@ class Player(pygame.sprite.Sprite):
 
         self.collisions('vertical')     
     
+    def platform_move(self, dt):
+        if self.platform:
+            self.rect.topleft += self.platform.direction * self.platform.speed * dt
+
 
     def check_on_surface(self):
         floor_rect = pygame.Rect(self.rect.bottomleft, (self.rect.width, 2))
         right_rect = pygame.Rect(self.rect.topright + vector(0,self.rect.height / 4), (2, self.rect.height / 2))
-        left_rect = pygame.Rect(self.rect.topleft + vector(0,self.rect.height / 4), (-2, self.rect.height / 2))
-
-
+        left_rect = pygame.Rect(self.rect.topleft + vector(-2,self.rect.height / 4), (2, self.rect.height / 2))
         collide_rects = [sprite.rect for sprite in self.collision_sprites]
 
         self.on_surface['floor'] = True if floor_rect.collidelist(collide_rects) >= 0 else False
         self.on_surface['right'] = True if right_rect.collidelist(collide_rects) >= 0 else False
         self.on_surface['left'] = True if left_rect.collidelist(collide_rects) >= 0 else False
-        
 
+        self.platform = None
+        for sprite in [sprite for sprite in self.collision_sprites.sprites() if hasattr(sprite, 'moving')]:
+            if sprite.rect.colliderect(floor_rect):
+                self.platform = sprite
+        
     def collisions(self, axis):
         for sprite in self.collision_sprites:
             if sprite.rect.colliderect(self.rect):
@@ -111,5 +120,6 @@ class Player(pygame.sprite.Sprite):
         self.update_tickers()
         self.input()
         self.move(dt)
+        self.platform_move(dt)
         self.check_on_surface()
     
