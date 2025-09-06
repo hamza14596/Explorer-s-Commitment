@@ -13,7 +13,7 @@ class Player(pygame.sprite.Sprite):
 
         self.direction = vector()
         self.speed = 50
-        self.gravity = 60
+        self.gravity = 45
         self.jump = False
         self.jump_height = 150
 
@@ -26,7 +26,7 @@ class Player(pygame.sprite.Sprite):
 
         self.ticker = {
             'wall jump': Ticker(200),
-            'wall slide block': Ticker(100)
+            'wall slide block': Ticker(300)
         }
 
     def input(self):
