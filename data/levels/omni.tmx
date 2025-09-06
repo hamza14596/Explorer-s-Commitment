@@ -161,14 +161,14 @@
     <property name="start_angle" type="int" value="0"/>
    </properties>
   </object>
-  <object id="74" name="helicopter" x="371" y="156" width="10" height="320">
+  <object id="74" name="helicopter" x="372" y="125" width="10" height="320">
    <properties>
     <property name="flip" type="bool" value="false"/>
     <property name="platform" type="bool" value="true"/>
     <property name="speed" type="int" value="6"/>
    </properties>
   </object>
-  <object id="75" name="helicopter" x="516" y="198" width="300" height="61">
+  <object id="75" name="helicopter" x="516" y="198" width="300" height="56">
    <properties>
     <property name="flip" type="bool" value="false"/>
     <property name="platform" type="bool" value="true"/>
@@ -201,7 +201,7 @@
   <object id="76" name="tooth" gid="225" x="1408" y="256" width="48" height="46"/>
  </objectgroup>
  <objectgroup id="2" name="Water">
-  <object id="2" name="water" x="0" y="640" width="2560" height="320"/>
+  <object id="2" name="water" x="16.6316" y="629.895" width="2560" height="320"/>
  </objectgroup>
  <objectgroup id="8" name="Data">
   <object id="28" name="Data" x="0" y="0" width="64" height="64">

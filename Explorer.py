@@ -2,31 +2,33 @@ from settings import *
 from ticker import Ticker
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self,pos,groups,collision_sprites):
+    def __init__(self,pos,groups,collision_sprites,semi_collision_sprites):
         super().__init__(groups)
-        self.image = pygame.Surface((50, 58))
-        self.image.fill('blue') 
+        self.image = pygame.image.load('graphics/player/idle/0.png')
+        
 
 
         self.rect= self.image.get_rect(topleft = pos)
-        self.old_rect = self.rect.copy()
+        self.hitbox_rect = self.rect.inflate(-76,-36)
+        self.old_rect = self.hitbox_rect.copy()
 
         self.direction = vector()
         self.speed = 50
-        self.gravity = 45
+        self.gravity = 40
         self.jump = False
         self.jump_height = 150
 
         self.collision_sprites = collision_sprites
+        self.semi_collision_sprites = semi_collision_sprites
         self.on_surface = {'floor': True, 'left': False, 'right': False}
-        
         self.platform = None
      
 
 
         self.ticker = {
             'wall jump': Ticker(200),
-            'wall slide block': Ticker(300)
+            'wall slide block': Ticker(300),
+            'platform skip': Ticker(300)
         }
 
     def input(self):
@@ -38,6 +40,8 @@ class Player(pygame.sprite.Sprite):
                 input_vector.x += 1
             if keys[pygame.K_a]:
                 input_vector.x -= 1
+            if keys[pygame.K_s]:
+                self.ticker['platform skip'].activate()
 
             self.direction.x = input_vector.normalize().x  if input_vector else input_vector.x
                 
@@ -47,16 +51,15 @@ class Player(pygame.sprite.Sprite):
 
     def move(self,dt):
 
-        self.rect.x += self.direction.x * self.speed * dt
+        self.hitbox_rect.x += self.direction.x * self.speed * dt
         self.collisions('horizontal')
 
         if not self.on_surface['floor'] and any((self.on_surface['left'], self.on_surface['right'])) and not self.ticker['wall slide block'].active:
             self.direction.y = 0
-            self.rect.y += self.gravity * dt
-            
+            self.hitbox_rect.y += self.gravity * dt
         else:
             self.direction.y += self.gravity / 2 * dt
-            self.rect.y += self.direction.y * dt
+            self.hitbox_rect.y += self.direction.y * dt
             self.direction.y += self.gravity / 2 * dt
             
     
@@ -64,6 +67,7 @@ class Player(pygame.sprite.Sprite):
             if self.on_surface['floor']:
                 self.direction.y = -self.jump_height
                 self.ticker['wall slide block'].activate()
+                self.hitbox_rect.bottom -=1
             elif any((self.on_surface['left'], self.on_surface['right'])) and not self.ticker['wall slide block'].active:
                 self.ticker['wall jump'].activate()
                 self.direction.y = -self.jump_height
@@ -71,55 +75,69 @@ class Player(pygame.sprite.Sprite):
             self.jump = False
 
         self.collisions('vertical')     
+        self.semi_collision()
+        self.rect.center = self.hitbox_rect.center
     
     def platform_move(self, dt):
         if self.platform:
-            self.rect.topleft += self.platform.direction * self.platform.speed * dt
+            self.hitbox_rect.topleft += self.platform.direction * self.platform.speed * dt
 
 
     def check_on_surface(self):
-        floor_rect = pygame.Rect(self.rect.bottomleft, (self.rect.width, 2))
-        right_rect = pygame.Rect(self.rect.topright + vector(0,self.rect.height / 4), (2, self.rect.height / 2))
-        left_rect = pygame.Rect(self.rect.topleft + vector(-2,self.rect.height / 4), (2, self.rect.height / 2))
+        floor_rect = pygame.Rect(self.hitbox_rect.bottomleft, (self.hitbox_rect.width, 2))
+        right_rect = pygame.Rect(self.hitbox_rect.topright + vector(0,self.hitbox_rect.height / 4), (2, self.hitbox_rect.height / 2))
+        left_rect = pygame.Rect(self.hitbox_rect.topleft + vector(-2,self.hitbox_rect.height / 4), (2, self.hitbox_rect.height / 2))
         collide_rects = [sprite.rect for sprite in self.collision_sprites]
+        semi_collide_rect = [sprite.rect for sprite in self.semi_collision_sprites]
 
-        self.on_surface['floor'] = True if floor_rect.collidelist(collide_rects) >= 0 else False
+        self.on_surface['floor'] = True if floor_rect.collidelist(collide_rects) >= 0 or floor_rect.collidelist(semi_collide_rect) >= 0 and self.direction.y >= 0 else False
         self.on_surface['right'] = True if right_rect.collidelist(collide_rects) >= 0 else False
         self.on_surface['left'] = True if left_rect.collidelist(collide_rects) >= 0 else False
 
         self.platform = None
-        for sprite in [sprite for sprite in self.collision_sprites.sprites() if hasattr(sprite, 'moving')]:
+        sprites = self.collision_sprites.sprites() + self.semi_collision_sprites.sprites()
+        for sprite in [sprite for sprite in sprites if hasattr(sprite, 'moving')]:
             if sprite.rect.colliderect(floor_rect):
                 self.platform = sprite
         
     def collisions(self, axis):
         for sprite in self.collision_sprites:
-            if sprite.rect.colliderect(self.rect):
+            if sprite.rect.colliderect(self.hitbox_rect):
                 if axis == 'horizontal':
-                    if self.rect.left <= sprite.rect.right and self.old_rect.left >= sprite.old_rect.right:
-                        self.rect.left = sprite.rect.right
+                    if self.hitbox_rect.left <= sprite.rect.right and int(self.old_rect.left) >= sprite.old_rect.right:
+                        self.hitbox_rect.left = sprite.rect.right
 
-                    if self.rect.right >= sprite.rect.left and self.old_rect.right <= sprite.old_rect.left:
-                        self.rect.right = sprite.rect.left
+                    if self.hitbox_rect.right >= sprite.rect.left and int(self.old_rect.right) <= sprite.old_rect.left:
+                        self.hitbox_rect.right = sprite.rect.left
 
                 else:  
-                    if self.rect.top <= sprite.rect.bottom and self.old_rect.top >= sprite.old_rect.bottom:
-                        self.rect.top = sprite.rect.bottom
-                        self.direction.y = 0  
+                    if self.hitbox_rect.top <= sprite.rect.bottom and int(self.old_rect.top) >= sprite.old_rect.bottom:
+                        self.hitbox_rect.top = sprite.rect.bottom
+                        if hasattr(sprite, 'moving'):
+                            self.hitbox_rect.top += 6
 
-                    if self.rect.bottom >= sprite.rect.top and self.old_rect.bottom <= sprite.old_rect.top:
-                        self.rect.bottom = sprite.rect.top
-                        self.direction.y = 0  
+                    if self.hitbox_rect.bottom >= sprite.rect.top and int(self.old_rect.bottom )<= sprite.old_rect.top:
+                        self.hitbox_rect.bottom = sprite.rect.top
+                    self.direction.y = 0  
+
+    def semi_collision(self):
+        if not self.ticker['platform skip'].active:
+            for sprite in self.semi_collision_sprites:
+                if sprite.rect.colliderect(self.hitbox_rect):
+                    if self.hitbox_rect.bottom >= sprite.rect.top and int(self.old_rect.bottom) <= sprite.old_rect.top:
+                        self.hitbox_rect.bottom = sprite.rect.top
+                        if self.direction.y > 0:
+                            self.direction.y = 0
 
     def update_tickers(self):  
         for ticker in self.ticker.values():
             ticker.update() 
 
     def update(self,dt):
-        self.old_rect = self.rect.copy()
+        self.old_rect = self.hitbox_rect.copy()
         self.update_tickers()
         self.input()
         self.move(dt)
         self.platform_move(dt)
         self.check_on_surface()
-    
+        
