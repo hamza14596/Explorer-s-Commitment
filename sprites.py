@@ -9,6 +9,18 @@ class Sprite(pygame.sprite.Sprite):
         self.old_rect = self.rect.copy()
         self.z = z
 
+class AnimatedSprite(Sprite):
+    def __init__(self,pos,frames, groups, z = Z_LAYERS['main'], animation_speed = ANIMATION_SPEED):
+        self.frames,self.frames_index = frames, 0
+        super().__init__(pos, self.frames[self.frames_index], groups, z)
+        self.animation_speed = animation_speed
+
+    def animate(self,dt):
+        self.frames_index += self.animation_speed * dt
+        self.image = self.frames[int(self.frames_index % len(self.frames))]
+
+    def update(self,dt):
+        self.animate(dt)
 
 class MovingSprite(Sprite):
     def __init__(self, groups, start_pos, end_pos, move_dir, speed):

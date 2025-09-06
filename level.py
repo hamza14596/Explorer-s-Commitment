@@ -1,19 +1,19 @@
 from settings import *
-from sprites import Sprite, MovingSprite
+from sprites import Sprite, AnimatedSprite, MovingSprite
 from Explorer import Player
 from groups import AllSprites
 
 class Level:
-    def __init__(self, tmx_map):
+    def __init__(self, tmx_map, level_frames):
         self.display_surface = pygame.display.get_surface()
 
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
         self.semi_collision_sprites = pygame.sprite.Group()
 
-        self.setup(tmx_map)
+        self.setup(tmx_map,level_frames)
 
-    def setup(self, tmx_map):
+    def setup(self, tmx_map, level_frames):
         for layer in ['BG', 'Terrain', 'FG', 'Platforms']:
             for x, y, surf in tmx_map.get_layer_by_name(layer).tiles():
                 groups = [self.all_sprites]
@@ -31,6 +31,13 @@ class Level:
         for obj in tmx_map.get_layer_by_name('Objects'):
             if obj.name == 'player':
                 self.player = Player((obj.x,obj.y),self.all_sprites,self.collision_sprites,self.semi_collision_sprites)
+            else:
+                if obj.name in ('barrel', 'crate'):
+                    Sprite((obj.x,obj.y), obj.image,(self.all_sprites,self.collision_sprites))
+                else:
+                    if 'palm' not in obj.name:
+                        frames = level_frames[obj.name]
+                        AnimatedSprite((obj.x,obj.y), frames, self.all_sprites)
       
         for obj in tmx_map.get_layer_by_name('Moving Objects'):
             if obj.name == 'helicopter':
