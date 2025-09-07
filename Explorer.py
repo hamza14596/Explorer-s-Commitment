@@ -2,11 +2,14 @@ from settings import *
 from ticker import Ticker
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self,pos,groups,collision_sprites,semi_collision_sprites):
+    def __init__(self,pos,groups,collision_sprites,semi_collision_sprites, frames):
         super().__init__(groups)
-        self.image = pygame.image.load('graphics/player/idle/0.png')
+        
         self.z = Z_LAYERS['main']
         
+        self.frames, self.frame_index = frames, 0
+        self.state, self.facing_right = 'idle', True
+        self.image = self.frames[self.state][self.frame_index]
 
 
         self.rect= self.image.get_rect(topleft = pos)
@@ -14,10 +17,11 @@ class Player(pygame.sprite.Sprite):
         self.old_rect = self.hitbox_rect.copy()
 
         self.direction = vector()
-        self.speed = 55
-        self.gravity = 40
+        self.speed = 30
+        self.gravity = 15
         self.jump = False
         self.jump_height = 150
+        self.attacking = False
 
         self.collision_sprites = collision_sprites
         self.semi_collision_sprites = semi_collision_sprites
@@ -29,7 +33,8 @@ class Player(pygame.sprite.Sprite):
         self.ticker = {
             'wall jump': Ticker(200),
             'wall slide block': Ticker(300),
-            'platform skip': Ticker(50)
+            'platform skip': Ticker(50),
+            'attack block': Ticker(500)
         }
 
     def input(self):
@@ -39,16 +44,25 @@ class Player(pygame.sprite.Sprite):
         if not self.ticker['wall jump'].active:
             if keys[pygame.K_d]:
                 input_vector.x += 1
+                self.facing_right = True
             if keys[pygame.K_a]:
                 input_vector.x -= 1
+                self.facing_right = False
             if keys[pygame.K_s]:
                 self.ticker['platform skip'].activate()
+            if keys[pygame.K_l]:
+                self.attack()
 
             self.direction.x = input_vector.normalize().x  if input_vector else input_vector.x
                 
         if keys[pygame.K_SPACE] and self.direction.y == 0:
                 self.jump = True
-               
+
+    def attack(self):
+        if not self.ticker['attack block'].active:
+            self.attacking = True    
+            self.frame_index = 0   
+            self.ticker['attack block'].activate()       
 
     def move(self,dt):
 
@@ -134,11 +148,45 @@ class Player(pygame.sprite.Sprite):
         for ticker in self.ticker.values():
             ticker.update() 
 
+    
+    def animate(self,dt):
+        self.frame_index += ANIMATION_SPEED * dt
+        if self.state == 'attack' and self.frame_index >= len(self.frames[self.state]):
+            self.state = 'idle'
+        self.image = self.frames[self.state][int(self.frame_index % len(self.frames[self.state]))]
+        self.image = self.image if self.facing_right else pygame.transform.flip(self.image, True, False)
+
+        if self.attacking and self.frame_index > len(self.frames[self.state]):
+            self.attacking = False
+
+
+    def get_state(self):
+        if self.on_surface['floor']:
+            if self.attacking:
+                self.state = 'attack'
+            else:
+                self.state = 'idle' if self.direction.x == 0 else 'run'
+        else:
+            if self.attacking:
+                self.state = 'air_attack'
+            else:
+
+                if any((self.on_surface['left'], self.on_surface['right'])):
+                    self.state = 'wall'
+                else:
+                    self.state = 'jump' if self.direction.y < 0 else 'fall'
+
+
+
     def update(self,dt):
         self.old_rect = self.hitbox_rect.copy()
         self.update_tickers()
+
+
         self.input()
         self.move(dt)
         self.platform_move(dt)
         self.check_on_surface()
         
+        self.get_state()
+        self.animate(dt)

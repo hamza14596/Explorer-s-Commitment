@@ -20,9 +20,15 @@ class Game:
             'flag': import_folder('graphics', 'level', 'flag'),
             'saw' : import_folder('graphics', 'enemies', 'saw', 'animation'),
             'floor_spike' : import_folder('graphics', 'enemies', 'floor_spikes'),
-            'palms' : import_sub_folders('graphics', 'level', 'palms')
+            'palms' : import_sub_folders('graphics', 'level', 'palms'),
+            'candle': import_folder('graphics', 'level', 'candle'),
+            'window': import_folder('graphics', 'level', 'window'),
+            'big_chain': import_folder('graphics', 'level', 'small_chains'),
+            'small_chain': import_folder('graphics','level', 'small_chains'),
+            'candle_light': import_folder('graphics','level','candle light'),
+            'player' : import_sub_folders('graphics','player')
         }
-        
+        print(self.level_frames['player'])
 
     def run(self):
         dt = self.clock.tick(60) / 1000
