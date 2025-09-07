@@ -29,7 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.ticker = {
             'wall jump': Ticker(200),
             'wall slide block': Ticker(300),
-            'platform skip': Ticker(300)
+            'platform skip': Ticker(50)
         }
 
     def input(self):
