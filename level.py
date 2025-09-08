@@ -68,7 +68,12 @@ class Level:
                     AnimatedSprite((obj.x,obj.y), frames, groups,z , animation_speed)
       
         for obj in tmx_map.get_layer_by_name('Moving Objects'):
-            if obj.name == 'helicopter':
+            if obj.name ==  'spike':
+                pass
+            else:
+                frames = level_frames[obj.name]
+                groups = (self.all_sprites, self.semi_collision_sprites) if obj.properties['platform'] else (self.all_sprites,self.damage_sprites)
+
                 if obj.width > obj.height:
                     move_dir = 'x'
                     start_pos = (obj.x,obj.y + obj.height / 2)
@@ -78,9 +83,11 @@ class Level:
                     start_pos = (obj.x + obj.width / 2, obj.y)
                     end_pos = (obj.x + obj.width / 2, obj.y + obj.height)
                 speed = obj.properties['speed']
-                MovingSprite((self.all_sprites,self.semi_collision_sprites), start_pos, end_pos, move_dir, speed)
+                MovingSprite(frames, groups, start_pos, end_pos, move_dir, speed, obj.properties['flip'])
                 
-                
+
+
+
     def run(self,dt):
         self.display_surface.fill('black')
         self.all_sprites.update(dt)
