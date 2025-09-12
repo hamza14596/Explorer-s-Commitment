@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="15" tilewidth="64" tileheight="64" infinite="0" nextlayerid="14" nextobjectid="81">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="15" tilewidth="64" tileheight="64" infinite="0" nextlayerid="14" nextobjectid="85">
  <tileset firstgid="1" source="../tilesets/outside.tsx"/>
  <tileset firstgid="49" source="../tilesets/items.tsx"/>
  <tileset firstgid="54" source="../tilesets/inside.tsx"/>
@@ -183,8 +183,11 @@
   <object id="25" name="silver" gid="52" x="704" y="256" width="64" height="64"/>
   <object id="26" name="skull" gid="53" x="576" y="256" width="64" height="64"/>
   <object id="78" name="skull" gid="53" x="576" y="64" width="64" height="64"/>
-  <object id="79" name="skull" gid="53" x="832" y="128" width="64" height="64"/>
+  <object id="82" name="skull" gid="53" x="513" y="127" width="64" height="64"/>
+  <object id="79" name="skull" gid="53" x="769" y="129" width="64" height="64"/>
   <object id="80" name="skull" gid="53" x="704" y="64" width="64" height="64"/>
+  <object id="83" name="skull" gid="53" x="831" y="448" width="64" height="64"/>
+  <object id="84" name="skull" gid="53" x="1100" y="171" width="64" height="64"/>
  </objectgroup>
  <objectgroup id="6" name="Enemies">
   <object id="36" name="shell" gid="224" x="192" y="384" width="76" height="46">

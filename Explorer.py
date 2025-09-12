@@ -1,11 +1,13 @@
 from settings import *
 from ticker import Ticker
+from math import sin
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self,pos,groups,collision_sprites,semi_collision_sprites, frames):
+    def __init__(self,pos,groups,collision_sprites,semi_collision_sprites, frames, data):
         super().__init__(groups)
         
         self.z = Z_LAYERS['main']
+        self.data = data
         
         self.frames, self.frame_index = frames, 0
         self.state, self.facing_right = 'idle', True
@@ -18,9 +20,9 @@ class Player(pygame.sprite.Sprite):
 
         self.direction = vector()
         self.speed = 30
-        self.gravity = 10
+        self.gravity = 8
         self.jump = False
-        self.jump_height = 80
+        self.jump_height = 90
         self.attacking = False
 
         self.collision_sprites = collision_sprites
@@ -34,7 +36,8 @@ class Player(pygame.sprite.Sprite):
             'wall jump': Ticker(200),
             'wall slide block': Ticker(300),
             'platform skip': Ticker(50),
-            'attack block': Ticker(500)
+            'attack block': Ticker(500),
+            'hit' : Ticker(400)
         }
 
     def input(self):
@@ -176,6 +179,17 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.state = 'jump' if self.direction.y < 0 else 'fall'
 
+    def get_damage(self):
+        if not self.ticker['hit'].active:
+            self.data.health -= 1
+            self.ticker['hit'].activate()
+
+    def flicker(self):
+        if self.ticker['hit'].active and sin(pygame.time.get_ticks() * 100)  >= 0:
+            white_mask = pygame.mask.from_surface(self.image)
+            white_surf = white_mask.to_surface()
+            white_surf.set_colorkey('black')
+            self.image = white_surf
 
 
     def update(self,dt):
@@ -190,3 +204,4 @@ class Player(pygame.sprite.Sprite):
         
         self.get_state()
         self.animate(dt)
+        self.flicker()

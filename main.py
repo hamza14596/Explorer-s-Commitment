@@ -3,6 +3,9 @@ from level import Level
 from pytmx.util_pygame import load_pygame
 from os.path import join
 from help import *
+from data import Data
+from debug import debug
+from UI import UI
 
 class Game:
     def __init__(self):
@@ -12,8 +15,10 @@ class Game:
         self.clock = pygame.time.Clock()
         self.import_assets()    
 
+        self.UI = UI(self.font, self.UI_frames)
+        self.data = Data(self.UI)
         self.tmx_maps= {0: load_pygame('data/levels/omni.tmx')}
-        self.current_stage = Level(self.tmx_maps[0], self.level_frames)
+        self.current_stage = Level(self.tmx_maps[0], self.level_frames, self.data)
 
     def import_assets(self):
         self.level_frames = {
@@ -37,7 +42,15 @@ class Game:
             'shell': import_sub_folders('graphics','enemies','shell'),
             'pearl': import_image('graphics','enemies','bullets','pearl'),
             'items': import_sub_folders('graphics','items'),
-            'particle': import_folder('graphics','effects','particle')
+            'particle': import_folder('graphics','effects','particle'),
+            'items': import_sub_folders('graphics','items'),
+        }
+
+        self.font = pygame.font.Font('graphics/ui/runescape_uf.ttf', 40)
+        self.UI_frames = {
+            'heart' : import_folder('graphics','ui','heart'),
+            'coin': import_image('graphics','ui','coin')
+            
         }
         
         print(self.level_frames['player'])
@@ -51,7 +64,10 @@ class Game:
                     sys.exit()
 
             self.current_stage.run(dt) 
+            self.UI.update(dt)
+              
             pygame.display.update()
+           
     
 
 
