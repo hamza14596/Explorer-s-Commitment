@@ -214,7 +214,7 @@
     <property name="death_border_bottom" type="int" value="0"/>
     <property name="horizon_line" type="int" value="600"/>
     <property name="level_unlock" type="int" value="1"/>
-    <property name="top_limit" type="int" value="700"/>
+    <property name="top_limit" type="int" value="200"/>
    </properties>
   </object>
  </objectgroup>
