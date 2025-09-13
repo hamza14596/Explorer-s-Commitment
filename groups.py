@@ -51,7 +51,7 @@ class AllSprites(pygame.sprite.Group):
         self.offset.y = self.offset.y if self.offset.y < self.borders['top'] else self.borders['top']
 
     def draw_sky(self):
-        self.display_surface.fill('#ddc6a1')
+        self.display_surface.fill("#ff9100")
         horizon_pos = self.horizon_line + self.offset.y
 
         sea_rect = pygame.FRect(0, horizon_pos,WINDOW_WIDTH, WINDOW_HEIGHT - horizon_pos)
