@@ -62,12 +62,13 @@ class Game:
         }
 
         self.aboveworld_frames = {
-            'palms' : import_folder('graphics','overworld','palm'),
-            'water' : import_folder('graphics','overworld','water')
+            'palm' : import_folder('graphics','overworld','objects','palm'),
+            'water' : import_folder('graphics','overworld','objects','water'),
+            'path' : import_folder_dict('graphics','objects','overworld','path'),
+            'icon': import_sub_folders('graphics','map','icon')
         }
         
-        print(self.level_frames['player'])
-        
+
     def run(self):
         dt = self.clock.tick(60) / 1000
         while True:

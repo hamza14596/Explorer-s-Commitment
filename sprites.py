@@ -12,7 +12,7 @@ class Sprite(pygame.sprite.Sprite):
         self.z = z
 
 class AnimatedSprite(Sprite):
-    def __init__(self,pos,frames, groups, z = Z_LAYERS['main'], animation_speed = 0.2):
+    def __init__(self,pos,frames, groups, z = Z_LAYERS['main'], animation_speed = 0.3):
         self.frames,self.frames_index = frames, 0
         super().__init__(pos, self.frames[self.frames_index], groups, z)
         self.animation_speed = animation_speed
@@ -150,3 +150,62 @@ class Clouds(Sprite):
         if self.rect.right <= 0:
             self.kill()
 
+
+class Node(pygame.sprite.Sprite):
+    def __init__(self, pos, surf, groups, level , data, paths):
+        super().__init__(groups)
+        self.image = surf
+        self.rect = self.image.get_frect(center = (pos[0] + TILE_SIZE / 2, pos[1] + TILE_SIZE /2))
+        self.z = Z_LAYERS['path']
+        self.level= level
+        self.data = data
+        self.paths = paths
+        
+
+    def can_move(self, direction):
+        if direction in list(self.paths.keys()):
+            return True
+
+class Icon(pygame.sprite.Sprite):
+    def __init__(self, pos, groups, frames):
+        super().__init__(groups)
+        self.icon = True
+        self.path = None
+        self.direction = vector()
+        self.speed = 4
+
+        self.frames, self.frame_index = frames, 0
+        self.state = 'idle'
+        self.image = self.frames[self.state][self.frame_index]
+
+        self.z = Z_LAYERS['main']
+
+        self.rect = self.image.get_frect(center = pos)
+
+
+    def start_move(self, path):
+        self.rect.center = path[0]
+        self.path = path[1:]
+        self.find_path()
+
+    def find_path(self):
+        if self.path:
+            print(self.path)
+            if self.rect.centerx == self.path[0][0]:
+                self.direction = vector(0,1 if self.path[0][1] > self.rect.centery else -1)
+            else:
+                self.direction = vector(1 if self.path[0][0] > self.centerx else -1,0)
+
+        else:
+            self.direction = vector()
+
+    def point_collision(self):
+        if self.direction.y == 1 and self.rect.centery >= self.path[0][1]:
+            self.rect.center = self.path[0][1]
+            del self.path[0]
+            self.find_path()
+
+    def update(self,dt):
+        if self.path:
+            self.point_collision()
+            self.rect.center += self.direction * self.speed * dt
