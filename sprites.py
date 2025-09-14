@@ -163,7 +163,7 @@ class Node(pygame.sprite.Sprite):
         
 
     def can_move(self, direction):
-        if direction in list(self.paths.keys()):
+        if direction in list(self.paths.keys()) and int(self.paths[direction][0][0]) <= self.data.unlocked_level:
             return True
 
 class Icon(pygame.sprite.Sprite):
@@ -214,6 +214,7 @@ class Icon(pygame.sprite.Sprite):
         self.frame_index += ANIMATION_SPEED * dt
         self.image = self.frames[self.state][int(self.frame_index % len(self.frames[self.state]))]
 
+    
     def get_state(self):
         self.state = 'idle'
         if self.direction  == vector(1,0):  self.state = 'right'

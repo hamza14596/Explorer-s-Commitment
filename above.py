@@ -62,6 +62,13 @@ class AboveWorld:
                     data = self.data,
                     paths = available_path)
 
+    def create_path_sprites(self):
+
+        path_tiles = {1: [vector(20,21), vector(21,21)]}
+
+        for path_id, data in self.paths.items():
+            print(path_id)
+            print(data)
 
     def input(self):
         keys = pygame.key.get_pressed()
