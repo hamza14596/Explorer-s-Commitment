@@ -3,7 +3,7 @@ from ticker import Ticker
 from math import sin
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self,pos,groups,collision_sprites,semi_collision_sprites, frames, data):
+    def __init__(self,pos,groups,collision_sprites,semi_collision_sprites, frames, data, attack_sound, jump_sound):
         super().__init__(groups)
         
         self.z = Z_LAYERS['main']
@@ -19,10 +19,10 @@ class Player(pygame.sprite.Sprite):
         self.old_rect = self.hitbox_rect.copy()
 
         self.direction = vector()
-        self.speed = 30
-        self.gravity = 8
+        self.speed = 15
+        self.gravity = 2
         self.jump = False
-        self.jump_height = 90
+        self.jump_height = 40
         self.attacking = False
 
         self.collision_sprites = collision_sprites
@@ -40,6 +40,8 @@ class Player(pygame.sprite.Sprite):
             'hit' : Ticker(400)
         }
 
+        self.attack_sound = attack_sound
+        self.jump_sound = jump_sound
     def input(self):
         keys = pygame.key.get_pressed()
 
@@ -66,6 +68,7 @@ class Player(pygame.sprite.Sprite):
             self.attacking = True    
             self.frame_index = 0   
             self.ticker['attack block'].activate()       
+            self.attack_sound.play()
 
     def move(self,dt):
 
@@ -86,6 +89,7 @@ class Player(pygame.sprite.Sprite):
                 self.direction.y = -self.jump_height
                 self.ticker['wall slide block'].activate()
                 self.hitbox_rect.bottom -=1
+                self.jump_sound.play()
             elif any((self.on_surface['left'], self.on_surface['right'])) and not self.ticker['wall slide block'].active:
                 self.ticker['wall jump'].activate()
                 self.direction.y = -self.jump_height

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="24" height="30" tilewidth="64" tileheight="64" infinite="0" nextlayerid="14" nextobjectid="194">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="24" height="30" tilewidth="64" tileheight="64" infinite="0" nextlayerid="14" nextobjectid="195">
  <tileset firstgid="1" source="../tilesets/outside.tsx"/>
  <tileset firstgid="49" source="../tilesets/items.tsx"/>
  <tileset firstgid="54" source="../tilesets/inside.tsx"/>
@@ -148,7 +148,7 @@
  <objectgroup id="4" name="Objects">
   <object id="4" name="flag" gid="219" x="1184" y="384" width="68" height="186"/>
   <object id="15" name="player" gid="223" x="192" y="1536" width="74" height="56"/>
-  <object id="88" name="saw" x="448" y="1216" width="64" height="64">
+  <object id="88" name="saw" x="451" y="1156" width="64" height="64">
    <properties>
     <property name="speed" type="int" value="0"/>
    </properties>
@@ -158,12 +158,7 @@
     <property name="speed" type="int" value="0"/>
    </properties>
   </object>
-  <object id="90" name="saw" x="704" y="1216" width="64" height="64">
-   <properties>
-    <property name="speed" type="int" value="0"/>
-   </properties>
-  </object>
-  <object id="91" name="saw" x="832" y="1152" width="64" height="64">
+  <object id="91" name="saw" x="773" y="1153" width="64" height="64">
    <properties>
     <property name="speed" type="int" value="0"/>
    </properties>
@@ -240,7 +235,7 @@
     <property name="end_angle" type="int" value="360"/>
     <property name="platform" type="bool" value="false"/>
     <property name="radius" type="int" value="100"/>
-    <property name="speed" type="int" value="50"/>
+    <property name="speed" type="int" value="5"/>
     <property name="start_angle" type="int" value="180"/>
    </properties>
   </object>
@@ -248,30 +243,28 @@
    <properties>
     <property name="flip" type="bool" value="false"/>
     <property name="platform" type="bool" value="true"/>
-    <property name="speed" type="int" value="60"/>
+    <property name="speed" type="int" value="6"/>
    </properties>
   </object>
   <object id="133" name="saw" x="187" y="320" width="10" height="512">
    <properties>
     <property name="flip" type="bool" value="false"/>
     <property name="platform" type="bool" value="false"/>
-    <property name="speed" type="int" value="100"/>
+    <property name="speed" type="int" value="10"/>
    </properties>
   </object>
-  <object id="137" name="spike" gid="227" x="192" y="128" width="54" height="54">
-   <properties>
-    <property name="end_angle" type="int" value="90"/>
-    <property name="platform" type="bool" value="false"/>
-    <property name="radius" type="int" value="100"/>
-    <property name="speed" type="int" value="50"/>
-    <property name="start_angle" type="int" value="0"/>
-   </properties>
-  </object>
-  <object id="139" name="helicopter" x="1024" y="704" width="10" height="320">
+  <object id="139" name="helicopter" x="283.286" y="190.088" width="10" height="785.333">
    <properties>
     <property name="flip" type="bool" value="false"/>
     <property name="platform" type="bool" value="true"/>
-    <property name="speed" type="int" value="100"/>
+    <property name="speed" type="int" value="5"/>
+   </properties>
+  </object>
+  <object id="194" name="helicopter" x="1280.62" y="959.42" width="10" height="494">
+   <properties>
+    <property name="flip" type="bool" value="false"/>
+    <property name="platform" type="bool" value="true"/>
+    <property name="speed" type="int" value="5"/>
    </properties>
   </object>
  </objectgroup>
@@ -293,7 +286,7 @@
   <object id="129" name="silver" gid="52" x="1280" y="1472" width="64" height="64"/>
   <object id="130" name="silver" gid="52" x="1024" y="1472" width="64" height="64"/>
   <object id="131" name="silver" gid="52" x="1152" y="1536" width="64" height="64"/>
-  <object id="132" name="diamond" gid="49" x="640" y="1216" width="64" height="64"/>
+  <object id="132" name="diamond" gid="49" x="706" y="832" width="64" height="64"/>
   <object id="138" name="skull" gid="53" x="192" y="128" width="64" height="64"/>
   <object id="144" name="silver" gid="52" x="192" y="1152" width="64" height="64"/>
   <object id="145" name="silver" gid="52" x="256" y="1152" width="64" height="64"/>
@@ -306,7 +299,6 @@
   <object id="152" name="silver" gid="52" x="704" y="960" width="64" height="64"/>
   <object id="153" name="silver" gid="52" x="640" y="960" width="64" height="64"/>
   <object id="154" name="silver" gid="52" x="576" y="960" width="64" height="64"/>
-  <object id="155" name="silver" gid="52" x="704" y="832" width="64" height="64"/>
   <object id="156" name="silver" gid="52" x="768" y="256" width="64" height="64"/>
   <object id="157" name="silver" gid="52" x="640" y="192" width="64" height="64"/>
   <object id="162" name="silver" gid="52" x="256" y="320" width="64" height="64"/>

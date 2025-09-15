@@ -12,7 +12,7 @@ class Tooth(pygame.sprite.Sprite):
 
         self.direction = choice((-1,1))
         self.collision_rects = [sprite.rect for sprite in collision_sprites]
-        self.speed = 15
+        self.speed = 7
 
         self.hit_ticker = Ticker(250)
 

@@ -5,9 +5,10 @@ from random import randint
 
 
 class AboveWorld:
-    def __init__(self, tmx_map, data, aboveworld_frames):
+    def __init__(self, tmx_map, data, aboveworld_frames, switch_stage):
         self.display_surface = pygame.display.get_surface()
         self.data = data
+        self.switch_stage = switch_stage
 
         self.all_sprites = WorldSprites(data)
         self.node_sprites = pygame.sprite.Group()
@@ -138,6 +139,9 @@ class AboveWorld:
                 self.move('down')
             if keys[pygame.K_a] and self.current_node.can_move('left'):
                 self.move('left')
+            if keys[pygame.K_RETURN]:
+                self.data.current_level = self.current_node.level
+                self.switch_stage('level')
 
     def move(self, direction):
         path_key = int(self.current_node.paths[direction][0])
