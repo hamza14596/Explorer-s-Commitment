@@ -14,7 +14,9 @@ class Game:
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Explorer's Commitment")
         self.clock = pygame.time.Clock()
-        self.import_assets()    
+        self.import_assets()   
+        self.completed_game = False
+ 
 
         self.UI = UI(self.font, self.UI_frames)
         self.data = Data(self.UI)
@@ -32,17 +34,72 @@ class Game:
         self.current_stage = Level(self.tmx_maps[self.data.current_level], self.level_frames,self.audio_files, self.data, self.switch_stage)
         self.bg_music.play()
 
-    def switch_stage(self, target, unlock = 0):
+
+    def game_completed_screen(self):
+        display_surface = pygame.display.get_surface()
+        font = pygame.font.SysFont('comicsans', 60)
+        small_font = pygame.font.SysFont('comicsans', 30)
+
+        completed = True
+        while completed:
+            display_surface.fill((0, 0, 0))  # Black background
+
+            # Display "Game Completed"
+            text = font.render("GAME COMPLETED!", True, (0, 255, 0))
+            text_rect = text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 - 50))
+            display_surface.blit(text, text_rect)
+
+            # Display "Press R to Restart or Q to Quit"
+            sub_text = small_font.render("Press R to Restart or Q to Quit", True, (255, 255, 255))
+            sub_rect = sub_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 50))
+            display_surface.blit(sub_text, sub_rect)
+
+            pygame.display.update()
+
+            # Event handling
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        completed = False  # exit loop, restart game
+                    elif event.key == pygame.K_q:
+                        pygame.quit()
+                        exit()
+
+    def switch_stage(self, target, unlock=0):
+        
+        print(self.data.current_level)
+        
         if target == 'level':
-            self.current_stage = Level(self.tmx_maps[self.data.current_level], self.level_frames,self.audio_files, self.data, self.switch_stage)
-            pass
+            # Load the current level
+            self.current_stage = Level(
+                self.tmx_maps[self.data.current_level],
+                self.level_frames,
+                self.audio_files,
+                self.data,
+                self.switch_stage
+            )
         else:
+            print('current_level:',self.data.current_level)
+            # Unlock new level if specified
             if unlock > 0:
-                self.data.unlocked_level = unlock
+                self.data.unlocked_level += 1
+                # Call game completed screen if current level is 5
+                if self.data.unlocked_level == 6:
+                    self.completed_game = True
+                    self.game_completed_screen()
             else:
                 self.data.health -= 1
-            self.current_stage = AboveWorld(self.tmx_aboveworld, self.data, self.aboveworld_frames, self.switch_stage)
-            
+
+            # Go to overworld
+            self.current_stage = AboveWorld(
+                self.tmx_aboveworld,
+                self.data,
+                self.aboveworld_frames,
+                self.switch_stage
+            )
 
     def import_assets(self):
         self.level_frames = {
@@ -113,6 +170,8 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                if self.completed_game == True:
+                    self.game_completed_screen()
 
             self.check_game_over()
             self.current_stage.run(dt) 
@@ -126,4 +185,3 @@ class Game:
 if __name__ == '__main__': 
     game = Game()
     game.run()
-

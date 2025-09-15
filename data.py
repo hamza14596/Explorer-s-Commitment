@@ -2,11 +2,11 @@ class Data:
     def __init__(self, UI):
         self.UI = UI
         self.coins = 0
-        self._health = 5
+        self._health = 50
         self.UI.create_hearts(self._health)
 
-        self.unlocked_level = 6
-        self.current_level = 4
+        self.unlocked_level = 0
+        self.current_level = 0
 
     @property
     def coins(self):

@@ -70,11 +70,17 @@ class AboveWorld:
    
    
     def create_path_sprites(self):
+        print("Creating paths for level:", [node.level for node in self.node_sprites])
+        print("Available paths:", self.paths.keys())
 
+        # Map node levels to grid positions
         nodes = {node.level: vector(node.grid_pos) for node in self.node_sprites}
+
         path_tiles = {}
 
-        for path_id, data in self.paths.items():
+        # Iterate only over paths that actually exist
+        for path_id in sorted(self.paths.keys()):
+            data = self.paths[path_id]
             path = data['pos']
             start_node, end_node = nodes[data['start']], nodes[path_id]
             path_tiles[path_id] = [start_node]
@@ -85,11 +91,13 @@ class AboveWorld:
                     path_dir = (end - start) / TILE_SIZE
                     start_tile = vector(int(start[0] / TILE_SIZE), int(start[1] / TILE_SIZE))
 
+                    # Y-direction tiles
                     if path_dir.y:
                         dir_y = 1 if path_dir.y > 0 else -1
                         for y in range(dir_y, int(path_dir.y) + dir_y, dir_y):
                             path_tiles[path_id].append(start_tile + vector(0, y))
 
+                    # X-direction tiles
                     if path_dir.x:
                         dir_x = 1 if path_dir.x > 0 else -1
                         for x in range(dir_x, int(path_dir.x) + dir_x, dir_x):
@@ -97,6 +105,7 @@ class AboveWorld:
 
             path_tiles[path_id].append(end_node)
 
+        # Create PathSprites
         for key, path in path_tiles.items():
             for index, tile in enumerate(path):
                 surf = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
@@ -117,7 +126,6 @@ class AboveWorld:
                         surf = self.path_frames['bl']
                     elif (prev_tile.x, prev_tile.y, next_tile.x, next_tile.y) in [(1, 0, 0, -1), (0, -1, 1, 0)]:
                         surf = self.path_frames['tr']
-
                     else:
                         surf = self.path_frames['horizontal']
 
@@ -127,8 +135,7 @@ class AboveWorld:
                     groups=self.all_sprites,
                     level=key
                 )
-                            
-                
+
 
     def input(self):
         keys = pygame.key.get_pressed()

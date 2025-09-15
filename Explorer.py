@@ -19,7 +19,7 @@ class Player(pygame.sprite.Sprite):
         self.old_rect = self.hitbox_rect.copy()
 
         self.direction = vector()
-        self.speed = 15
+        self.speed = 30
         self.gravity = 2
         self.jump = False
         self.jump_height = 40

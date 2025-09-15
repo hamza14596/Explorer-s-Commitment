@@ -4,6 +4,7 @@ from Explorer import Player
 from groups import AllSprites
 from random import uniform
 from opponent import Tooth, Shell, Pearl
+from data import *
 
 class Level:
     def __init__(self, tmx_map, level_frames,audio_files, data, switch_stage):
@@ -100,7 +101,7 @@ class Level:
                     z = Z_LAYERS['main'] if not 'bg' in obj.name else Z_LAYERS['bg details']
 
                     animation_speed = ANIMATION_SPEED if not 'palm' in obj.name else ANIMATION_SPEED +  uniform(-1,1)
-                    print(animation_speed)
+                    
                     AnimatedSprite((obj.x,obj.y), frames, groups,z , animation_speed)
             
             if obj.name == 'flag':
@@ -203,7 +204,6 @@ class Level:
                 target.reverse()
 
     def check_constraint(self):
-
         if self.player.hitbox_rect.left <= 0:
             self.player.hitbox_rect.left = 0
         if self.player.hitbox_rect.right >= self.level_width:
@@ -212,8 +212,15 @@ class Level:
         if self.player.hitbox_rect.bottom > self.level_bottom:
             self.switch_stage('overworld', -1)
 
+        # Check flag collision
         if self.player.hitbox_rect.colliderect(self.level_finish_rect):
-            self.switch_stage('overworld',self.level_unlock )
+            if self.data.current_level == 5:
+                # Level 5 completed → trigger game complete
+                self.switch_stage('level')  # Game class will handle game_complete_screen
+            else:
+                # Other levels → go back to overworld as usual
+                self.switch_stage('overworld', self.level_unlock)
+
     def run(self,dt):
         self.display_surface.fill('black')
         
