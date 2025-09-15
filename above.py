@@ -45,10 +45,12 @@ class AboveWorld:
 
         self.paths = {}
         for obj in tmx_map.get_layer_by_name('Paths'):
-            pos = [(p.x + TILE_SIZE / 2, p.y + TILE_SIZE / 2) for p in obj.points]
+            pos = [(int(p.x + TILE_SIZE / 2), int(p.y + TILE_SIZE / 2)) for p in obj.points]
+
             start = obj.properties['start']
             end = obj.properties['end']
             self.paths[end] = {'pos': pos, 'start': start}
+            
 
 
 

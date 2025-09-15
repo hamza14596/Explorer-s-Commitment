@@ -192,7 +192,7 @@
 </data>
  </layer>
  <objectgroup id="4" name="Objects">
-  <object id="4" name="flag" gid="224" x="678.667" y="1018.67" width="68" height="186"/>
+  <object id="4" name="flag" gid="224" x="1874.67" y="513.337" width="68" height="186"/>
   <object id="6" name="crate" gid="223" x="1408" y="1536" width="50" height="36"/>
   <object id="7" name="crate" gid="223" x="1856" y="1536" width="50" height="36"/>
   <object id="11" name="palm_large" gid="225" x="192" y="1472" width="78" height="136"/>

@@ -77,7 +77,7 @@ class Player(pygame.sprite.Sprite):
 
         if not self.on_surface['floor'] and any((self.on_surface['left'], self.on_surface['right'])) and not self.ticker['wall slide block'].active:
             self.direction.y = 0
-            self.hitbox_rect.y += self.gravity * dt
+            self.hitbox_rect.y += self.gravity / 10 * dt
         else:
             self.direction.y += self.gravity / 2 * dt
             self.hitbox_rect.y += self.direction.y * dt
@@ -99,7 +99,7 @@ class Player(pygame.sprite.Sprite):
         self.collisions('vertical')     
         self.semi_collision()
         self.rect.center = self.hitbox_rect.center
-    
+  
     def platform_move(self, dt):
         if self.platform:
             self.hitbox_rect.topleft += self.platform.direction * self.platform.speed * dt
@@ -202,12 +202,8 @@ class Player(pygame.sprite.Sprite):
         self.update_tickers()
 
         self.input()
-
-       
-        self.platform_move(dt)
-
-        
         self.move(dt)
+        self.platform_move(dt)
         self.check_on_surface()
         
         self.get_state()
