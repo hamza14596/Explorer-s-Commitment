@@ -30,7 +30,7 @@ class Game:
             }
         self.tmx_aboveworld = load_pygame('data/overworld/overworld.tmx')
         self.current_stage = Level(self.tmx_maps[self.data.current_level], self.level_frames,self.audio_files, self.data, self.switch_stage)
-        self.bg_music.play(-1)
+        self.bg_music.play()
 
     def switch_stage(self, target, unlock = 0):
         if target == 'level':

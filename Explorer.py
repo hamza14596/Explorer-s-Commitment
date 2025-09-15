@@ -121,6 +121,7 @@ class Player(pygame.sprite.Sprite):
         for sprite in [sprite for sprite in sprites if hasattr(sprite, 'moving')]:
             if sprite.rect.colliderect(floor_rect):
                 self.platform = sprite
+                
         
     def collisions(self, axis):
         for sprite in self.collision_sprites:
@@ -196,14 +197,17 @@ class Player(pygame.sprite.Sprite):
             self.image = white_surf
 
 
-    def update(self,dt):
+    def update(self, dt):
         self.old_rect = self.hitbox_rect.copy()
         self.update_tickers()
 
-
         self.input()
-        self.move(dt)
+
+       
         self.platform_move(dt)
+
+        
+        self.move(dt)
         self.check_on_surface()
         
         self.get_state()

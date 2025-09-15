@@ -204,16 +204,25 @@ class Level:
 
     def check_constraint(self):
 
+        # left/right constraints
         if self.player.hitbox_rect.left <= 0:
             self.player.hitbox_rect.left = 0
         if self.player.hitbox_rect.right >= self.level_width:
             self.player.hitbox_rect.right = self.level_width
 
+        # bottom (death)
         if self.player.hitbox_rect.bottom > self.level_bottom:
             self.switch_stage('overworld', -1)
 
+        # success
         if self.player.hitbox_rect.colliderect(self.level_finish_rect):
-            self.switch_stage('overworld',self.level_unlock )
+            # unlock next level if not already unlocked
+            if self.level_unlock > self.data.unlocked_level:
+                self.data.unlocked_level = self.level_unlock
+
+            # go back to overworld
+            self.switch_stage('overworld', self.level_unlock)
+
     def run(self,dt):
         self.display_surface.fill('black')
         
