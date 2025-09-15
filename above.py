@@ -1,5 +1,5 @@
 from settings import *
-from sprites import Sprite, AnimatedSprite, Node, Icon
+from sprites import Sprite, AnimatedSprite, Node, Icon, PathSprite
 from groups import WorldSprites
 from random import randint
 
@@ -15,6 +15,9 @@ class AboveWorld:
         self.setup(tmx_map, aboveworld_frames)
 
         self.current_node = [node for node in self.node_sprites if node.level == 0][0]
+
+        self.path_frames = aboveworld_frames['path']
+        self.create_path_sprites()
 
     def setup(self, tmx_map, aboveworld_frames):
 
@@ -42,7 +45,7 @@ class AboveWorld:
         self.paths = {}
         for obj in tmx_map.get_layer_by_name('Paths'):
             pos = [(p.x + TILE_SIZE / 2, p.y + TILE_SIZE / 2) for p in obj.points]
-            start = obj.properties['end']
+            start = obj.properties['start']
             end = obj.properties['end']
             self.paths[end] = {'pos': pos, 'start': start}
 
@@ -61,14 +64,68 @@ class AboveWorld:
                     level = obj.properties['stage'],
                     data = self.data,
                     paths = available_path)
-
+   
+   
     def create_path_sprites(self):
 
-        path_tiles = {1: [vector(20,21), vector(21,21)]}
+        nodes = {node.level: vector(node.grid_pos) for node in self.node_sprites}
+        path_tiles = {}
 
         for path_id, data in self.paths.items():
-            print(path_id)
-            print(data)
+            path = data['pos']
+            start_node, end_node = nodes[data['start']], nodes[path_id]
+            path_tiles[path_id] = [start_node]
+
+            for index, points in enumerate(path):
+                if index < len(path) - 1:
+                    start, end = vector(points), vector(path[index + 1])
+                    path_dir = (end - start) / TILE_SIZE
+                    start_tile = vector(int(start[0] / TILE_SIZE), int(start[1] / TILE_SIZE))
+
+                    if path_dir.y:
+                        dir_y = 1 if path_dir.y > 0 else -1
+                        for y in range(dir_y, int(path_dir.y) + dir_y, dir_y):
+                            path_tiles[path_id].append(start_tile + vector(0, y))
+
+                    if path_dir.x:
+                        dir_x = 1 if path_dir.x > 0 else -1
+                        for x in range(dir_x, int(path_dir.x) + dir_x, dir_x):
+                            path_tiles[path_id].append(start_tile + vector(x, 0))
+
+            path_tiles[path_id].append(end_node)
+
+        for key, path in path_tiles.items():
+            for index, tile in enumerate(path):
+                surf = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
+
+                if 0 < index < len(path) - 1:
+                    prev_tile = path[index - 1] - tile
+                    next_tile = path[index + 1] - tile
+
+                    if prev_tile.x == next_tile.x:
+                        surf = self.path_frames['vertical']
+                    elif prev_tile.y == next_tile.y:
+                        surf = self.path_frames['horizontal']
+                    elif (prev_tile.x, prev_tile.y, next_tile.x, next_tile.y) in [(-1, 0, 0, -1), (0, -1, -1, 0)]:
+                        surf = self.path_frames['tl']
+                    elif (prev_tile.x, prev_tile.y, next_tile.x, next_tile.y) in [(1, 0, 0, 1), (0, 1, 1, 0)]:
+                        surf = self.path_frames['br']
+                    elif (prev_tile.x, prev_tile.y, next_tile.x, next_tile.y) in [(-1, 0, 0, 1), (0, 1, -1, 0)]:
+                        surf = self.path_frames['bl']
+                    elif (prev_tile.x, prev_tile.y, next_tile.x, next_tile.y) in [(1, 0, 0, -1), (0, -1, 1, 0)]:
+                        surf = self.path_frames['tr']
+
+                    else:
+                        surf = self.path_frames['horizontal']
+
+                PathSprite(
+                    pos=(tile.x * TILE_SIZE, tile.y * TILE_SIZE),
+                    surf=surf,
+                    groups=self.all_sprites,
+                    level=key
+                )
+                            
+                
 
     def input(self):
         keys = pygame.key.get_pressed()
