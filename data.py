@@ -2,7 +2,7 @@ class Data:
     def __init__(self, UI):
         self.UI = UI
         self.coins = 0
-        self._health = 50
+        self._health = 5
         self.UI.create_hearts(self._health)
 
         self.unlocked_level = 0
