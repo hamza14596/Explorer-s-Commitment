@@ -128,7 +128,7 @@ class Game:
 
         waiting = True
         while waiting:
-            dt = clock.tick(30) / 2500
+            dt = clock.tick(30) / 1000
 
             all_sprites.update(dt)
             screen.fill('#ff9100')  
@@ -169,7 +169,7 @@ class Game:
                         waiting = False
 
     def switch_stage(self, target, unlock=0):
-        print(self.data.current_level)
+        
 
         if target == 'level':
            
@@ -182,9 +182,7 @@ class Game:
             )
 
         elif target == 'overworld':
-            print('current_level:', self.data.current_level)
 
-            
             if unlock > 0:
                 self.data.unlocked_level += 1
             else:
@@ -258,6 +256,7 @@ class Game:
         }
 
         self.bg_music = pygame.mixer.Sound('audio/Ruder Buster.mp3')
+        
 
     def check_game_over(self):
         if self.data.health <= 0:

@@ -19,10 +19,10 @@ class Player(pygame.sprite.Sprite):
         self.old_rect = self.hitbox_rect.copy()
 
         self.direction = vector()
-        self.speed = 30
-        self.gravity = 2
+        self.speed = 25
+        self.gravity = 1
         self.jump = False
-        self.jump_height = 40
+        self.jump_height = 30
         self.attacking = False
 
         self.collision_sprites = collision_sprites
@@ -77,7 +77,7 @@ class Player(pygame.sprite.Sprite):
 
         if not self.on_surface['floor'] and any((self.on_surface['left'], self.on_surface['right'])) and not self.ticker['wall slide block'].active:
             self.direction.y = 0
-            self.hitbox_rect.y += self.gravity / 10 * dt
+            self.hitbox_rect.y += self.gravity * 9 * dt
         else:
             self.direction.y += self.gravity / 2 * dt
             self.hitbox_rect.y += self.direction.y * dt
