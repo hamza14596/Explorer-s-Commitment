@@ -7,6 +7,8 @@ from data import Data
 from debug import debug
 from UI import UI
 from above import AboveWorld
+from sprites import Sprite,AnimatedSprite,Clouds
+from random import randint, choice
 
 class Game:
     def __init__(self):
@@ -16,6 +18,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.import_assets()   
         self.completed_game = False
+        self.FINAL_LEVEL_INDEX = 5
  
 
         self.UI = UI(self.font, self.UI_frames)
@@ -32,48 +35,144 @@ class Game:
             }
         self.tmx_aboveworld = load_pygame('data/overworld/overworld.tmx')
         self.current_stage = Level(self.tmx_maps[self.data.current_level], self.level_frames,self.audio_files, self.data, self.switch_stage)
-        self.bg_music.play()
+        
 
+    def game_over_screen(self):
+        self.completed_game = True  
 
-    def game_completed_screen(self):
-        display_surface = pygame.display.get_surface()
-        font = pygame.font.SysFont('comicsans', 60)
-        small_font = pygame.font.SysFont('comicsans', 30)
+        font = pygame.font.Font(None, 74)
+        small_font = pygame.font.Font(None, 36)
 
-        completed = True
-        while completed:
-            display_surface.fill((0, 0, 0))  # Black background
+        screen = pygame.display.get_surface()
+        clock = pygame.time.Clock()
 
-            # Display "Game Completed"
-            text = font.render("GAME COMPLETED!", True, (0, 255, 0))
-            text_rect = text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 - 50))
-            display_surface.blit(text, text_rect)
+        
+        all_sprites = pygame.sprite.LayeredUpdates()
 
-            # Display "Press R to Restart or Q to Quit"
-            sub_text = small_font.render("Press R to Restart or Q to Quit", True, (255, 255, 255))
-            sub_rect = sub_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 50))
-            display_surface.blit(sub_text, sub_rect)
+     
+        
+        cloud_surf = import_image('graphics','level','clouds','large_cloud').convert_alpha()
 
-            pygame.display.update()
+        screen_w, screen_h = screen.get_size()
 
-            # Event handling
+       
+        for _ in range(6):
+            pos = (randint(0, screen_w), randint(50, screen_h // 2))
+            Clouds(pos, cloud_surf, [all_sprites], z=Z_LAYERS['clouds'])
+
+        waiting = True
+        while waiting:
+            dt = clock.tick(60) / 1000
+
+            all_sprites.update(dt)
+            screen.fill('#ff9100') 
+            all_sprites.draw(screen)
+
+           
+            text = font.render("GAME OVER", True, (255, 0, 0))
+            text_rect = text.get_rect(center=(screen_w // 2, screen_h // 2 - 50))
+            screen.blit(text, text_rect)
+
+            prompt = small_font.render("Press R to Restart or Q to Quit", True, (255, 255, 255))
+            prompt_rect = prompt.get_rect(center=(screen_w // 2, screen_h // 2 + 50))
+            screen.blit(prompt, prompt_rect)
+
+            pygame.display.flip()
+
+        
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_r:
-                        completed = False  # exit loop, restart game
-                    elif event.key == pygame.K_q:
+                    if event.key == pygame.K_q:
                         pygame.quit()
                         exit()
+                    if event.key == pygame.K_r:
+                       
+                        self.data.current_level = 0
+                        self.data.unlocked_level = 0
+                        self.data.health = 3
+                        self.completed_game = False
+                        self.current_stage = Level(
+                            self.tmx_maps[self.data.current_level],
+                            self.level_frames,
+                            self.audio_files,
+                            self.data,
+                            self.switch_stage
+                        )
+                        waiting = False
+
+        
+    def game_completed_screen(self):
+        self.completed_game = True
+
+        font = pygame.font.Font(None, 74)
+        small_font = pygame.font.Font(None, 36)
+
+        screen = pygame.display.get_surface()
+        clock = pygame.time.Clock()
+
+      
+        all_sprites = pygame.sprite.LayeredUpdates()
+
+      
+        cloud_surf = import_image('graphics','level','clouds','large_cloud').convert_alpha()
+
+        screen_w, screen_h = screen.get_size()
+
+        
+        for _ in range(6):
+            pos = (randint(0, screen_w), randint(50, screen_h // 2))
+            Clouds(pos, cloud_surf, [all_sprites], z=Z_LAYERS['clouds'])
+
+        waiting = True
+        while waiting:
+            dt = clock.tick(30) / 2500
+
+            all_sprites.update(dt)
+            screen.fill('#ff9100')  
+            all_sprites.draw(screen)
+
+           
+            text = font.render("GAME COMPLETED!", True, (255, 255, 255))
+            text_rect = text.get_rect(center=(screen_w // 2, screen_h // 2 - 50))
+            screen.blit(text, text_rect)
+
+            prompt = small_font.render("Press R to Restart or Q to Quit", True, (255, 230, 200))
+            prompt_rect = prompt.get_rect(center=(screen_w // 2, screen_h // 2 + 50))
+            screen.blit(prompt, prompt_rect)
+
+            pygame.display.flip()
+
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        pygame.quit()
+                        exit()
+                    if event.key == pygame.K_r:
+                        self.data.current_level = 0
+                        self.data.unlocked_level = 0
+                        self.data.health = 5
+                        self.completed_game = False
+                        self.current_stage = Level(
+                            self.tmx_maps[self.data.current_level],
+                            self.level_frames,
+                            self.audio_files,
+                            self.data,
+                            self.switch_stage
+                        )
+                        waiting = False
 
     def switch_stage(self, target, unlock=0):
-        
         print(self.data.current_level)
-        
+
         if target == 'level':
-            # Load the current level
+           
             self.current_stage = Level(
                 self.tmx_maps[self.data.current_level],
                 self.level_frames,
@@ -81,25 +180,29 @@ class Game:
                 self.data,
                 self.switch_stage
             )
-        else:
-            print('current_level:',self.data.current_level)
-            # Unlock new level if specified
+
+        elif target == 'overworld':
+            print('current_level:', self.data.current_level)
+
+            
             if unlock > 0:
                 self.data.unlocked_level += 1
-                # Call game completed screen if current level is 5
-                if self.data.unlocked_level == 6:
-                    self.completed_game = True
-                    self.game_completed_screen()
             else:
                 self.data.health -= 1
 
-            # Go to overworld
+           
             self.current_stage = AboveWorld(
                 self.tmx_aboveworld,
                 self.data,
                 self.aboveworld_frames,
                 self.switch_stage
             )
+
+        elif target == 'game_completed':
+            
+            if not hasattr(self, "completed_game") or not self.completed_game:
+                self.completed_game = True
+                self.game_completed_screen()
 
     def import_assets(self):
         self.level_frames = {
@@ -158,11 +261,8 @@ class Game:
 
     def check_game_over(self):
         if self.data.health <= 0:
-            pygame.quit()
-            sys.exit()
-
-        
-
+            self.game_over_screen()
+            
     def run(self):
         dt = self.clock.tick(30) / 2500
         while True:
@@ -172,6 +272,7 @@ class Game:
                     sys.exit()
                 if self.completed_game == True:
                     self.game_completed_screen()
+                   
 
             self.check_game_over()
             self.current_stage.run(dt) 

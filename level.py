@@ -212,13 +212,14 @@ class Level:
         if self.player.hitbox_rect.bottom > self.level_bottom:
             self.switch_stage('overworld', -1)
 
-        # Check flag collision
+      
         if self.player.hitbox_rect.colliderect(self.level_finish_rect):
-            if self.data.current_level == 5:
-                # Level 5 completed → trigger game complete
-                self.switch_stage('level')  # Game class will handle game_complete_screen
+            if self.data.current_level == 5: 
+                if not hasattr(self.data, "completed_game") or not self.data.completed_game:
+                    
+                    self.data.completed_game = True
+                    self.switch_stage("game_completed")  
             else:
-                # Other levels → go back to overworld as usual
                 self.switch_stage('overworld', self.level_unlock)
 
     def run(self,dt):

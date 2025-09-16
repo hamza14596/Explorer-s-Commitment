@@ -1,6 +1,5 @@
 from pygame.time import get_ticks
 
-
 class Ticker:
     def __init__(self, duration, func = None, repeat = False):
 
