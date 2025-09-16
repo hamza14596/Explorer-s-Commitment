@@ -172,7 +172,7 @@
    <properties>
     <property name="flip" type="bool" value="false"/>
     <property name="platform" type="bool" value="true"/>
-    <property name="speed" type="int" value="60"/>
+    <property name="speed" type="int" value="5"/>
    </properties>
   </object>
  </objectgroup>

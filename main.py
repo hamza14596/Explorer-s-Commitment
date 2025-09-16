@@ -256,6 +256,7 @@ class Game:
         }
 
         self.bg_music = pygame.mixer.Sound('audio/Ruder Buster.mp3')
+        self.bg_music.play()
         
 
     def check_game_over(self):

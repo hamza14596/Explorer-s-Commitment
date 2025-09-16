@@ -147,13 +147,13 @@
  </layer>
  <objectgroup id="4" name="Objects">
   <object id="4" name="flag" gid="232" x="1221.33" y="392" width="68" height="186"/>
-  <object id="15" name="player" gid="236" x="642.667" y="641.33" width="74" height="56"/>
+  <object id="15" name="player" gid="236" x="1270.33" y="1404.33" width="74" height="56"/>
   <object id="91" name="saw" x="960" y="1536" width="64" height="64">
    <properties>
     <property name="speed" type="int" value="0"/>
    </properties>
   </object>
-  <object id="134" name="saw" x="352" y="352" width="64" height="64">
+  <object id="134" name="saw" x="512" y="826.667" width="64" height="64">
    <properties>
     <property name="speed" type="int" value="0"/>
    </properties>
@@ -178,17 +178,7 @@
     <property name="speed" type="int" value="0"/>
    </properties>
   </object>
-  <object id="143" name="saw" x="576" y="448" width="64" height="64">
-   <properties>
-    <property name="speed" type="int" value="0"/>
-   </properties>
-  </object>
-  <object id="178" name="saw" x="640" y="512" width="64" height="64">
-   <properties>
-    <property name="speed" type="int" value="0"/>
-   </properties>
-  </object>
-  <object id="179" name="saw" x="768" y="512" width="64" height="64">
+  <object id="179" name="saw" x="769" y="447.667" width="64" height="64">
    <properties>
     <property name="speed" type="int" value="0"/>
    </properties>

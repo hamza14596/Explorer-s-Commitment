@@ -257,7 +257,7 @@
    <properties>
     <property name="flip" type="bool" value="false"/>
     <property name="platform" type="bool" value="true"/>
-    <property name="speed" type="int" value="5"/>
+    <property name="speed" type="int" value="6"/>
    </properties>
   </object>
   <object id="194" name="helicopter" x="1280.62" y="959.42" width="10" height="494">
