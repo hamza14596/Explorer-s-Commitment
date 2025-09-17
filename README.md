@@ -1,5 +1,7 @@
 Explorer's Commitment
 
+IMPORRTATNT: When first loading the game, you miight see the speed is too high, just reload nit and it will work perfectly!
+
 
 A 2D platformer game built in Python using Pygame, Se$" veral additional features and customizations.
 
